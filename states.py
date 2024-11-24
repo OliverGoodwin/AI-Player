@@ -44,14 +44,17 @@ def find_next_states(initialState):
         state[johnnyPos[0]][johnnyPos[1]].remove(0)
         if 3 in state[johnnyPos[0] - 1][johnnyPos[1]] and 5 not in state[johnnyPos[0]][johnnyPos[1]] and 6 not in state[johnnyPos[0]][johnnyPos[1]]:
             state[johnnyPos[0]][johnnyPos[1]].append(3)
-        i = 0
-        canPlace = False
-        while canPlace == False:
-            if state[johnnyPos[0] + i + 1][johnnyPos[1] + 1] == [-1]:
-                i += 1
-            else:
-                state[johnnyPos[0] + i][johnnyPos[1] + 1].append(0)
-                canPlace = True
+        if 5 not in state[johnnyPos[0]][johnnyPos[1] + 1] and 6 not in state[johnnyPos[0]][johnnyPos[1] + 1]:
+            i = 0
+            canPlace = False
+            while canPlace == False:
+                if state[johnnyPos[0] + i + 1][johnnyPos[1] + 1] == [-1]:
+                    i += 1
+                else:
+                    state[johnnyPos[0] + i][johnnyPos[1] + 1].append(0)
+                    canPlace = True
+        else:
+            state[johnnyPos[0]][johnnyPos[1] + 1].append(0)
         possibleStates.append(state)
         state = copy.deepcopy(initialState)
         print("case 2")
@@ -60,28 +63,31 @@ def find_next_states(initialState):
         state[johnnyPos[0]][johnnyPos[1]].remove(0)
         if 3 in state[johnnyPos[0] - 1][johnnyPos[1]] and 5 not in state[johnnyPos[0]][johnnyPos[1]] and 6 not in state[johnnyPos[0]][johnnyPos[1]]:
             state[johnnyPos[0]][johnnyPos[1]].append(3)
-        i = 0
-        canPlace = False
-        while canPlace == False:
-            if state[johnnyPos[0] + i + 1][johnnyPos[1] - 1] == [-1]:
-                i += 1
-            else:
-                state[johnnyPos[0] + i][johnnyPos[1] - 1].append(0)
-                canPlace = True
+        if 5 not in state[johnnyPos[0]][johnnyPos[1] - 1] and 6 not in state[johnnyPos[0]][johnnyPos[1] - 1]:
+            i = 0
+            canPlace = False
+            while canPlace == False:
+                if state[johnnyPos[0] + i + 1][johnnyPos[1] - 1] == [-1]:
+                    i += 1
+                else:
+                    state[johnnyPos[0] + i][johnnyPos[1] - 1].append(0)
+                    canPlace = True
+        else:
+            state[johnnyPos[0]][johnnyPos[1] - 1].append(0)
         possibleStates.append(state)
         state = copy.deepcopy(initialState)
         print("case 2")
 
-    #case 3: Johnny on ladder cell with ladder or empty space above and below
+    #case 3: Johnny on ladder or roof with ladder or empty space or roof above and below
     #above
-    if 5 in state[johnnyPos[0]][johnnyPos[1]]:
-        if state[johnnyPos[0] - 1][johnnyPos[1]] in ([-1, 5]):
+    if 5 in state[johnnyPos[0]][johnnyPos[1]] or 6 in state[johnnyPos[0]][johnnyPos[1]]:
+        if state[johnnyPos[0] - 1][johnnyPos[1]] in ([-1, 5], [-1, 6]):
             state[johnnyPos[0]][johnnyPos[1]].remove(0)
             state[johnnyPos[0] - 1][johnnyPos[1]].append(0)
             possibleStates.append(state)
             state = copy.deepcopy(initialState)
             print("case 3")
-        if state[johnnyPos[0] + 1][johnnyPos[1]] in ([-1, 5]):
+        if state[johnnyPos[0] + 1][johnnyPos[1]] in ([-1, 5], [-1, 6]):
             state[johnnyPos[0]][johnnyPos[1]].remove(0)
             state[johnnyPos[0] + 1][johnnyPos[1]].append(0)
             possibleStates.append(state)
