@@ -93,13 +93,20 @@ def find_next_states(initialState):
     if 4 in state[johnnyPos[0]][johnnyPos[1] - 1]or 2 in state[johnnyPos[0]][johnnyPos[1] - 1]:
         state[johnnyPos[0]][johnnyPos[1]].remove(0)
         state[johnnyPos[0]][johnnyPos[1] - 1].append(0)
-        state[johnnyPos[0]][johnnyPos[1] - 1].remove(4 or 2)
+        if 4 in state[johnnyPos[0]][johnnyPos[1] - 1]:
+            state[johnnyPos[0]][johnnyPos[1] - 1].remove(4)
+        elif 2 in state[johnnyPos[0]][johnnyPos[1] - 1]:
+            state[johnnyPos[0]][johnnyPos[1] - 1].remove(2)
         possibleStates.append(state)
         state = copy.deepcopy(initialState)
-    if 4 in state[johnnyPos[0]][johnnyPos[1] + 1] or 2 in state[johnnyPos[0]][johnnyPos[1] - 1]:
+    #right
+    if 4 in state[johnnyPos[0]][johnnyPos[1] + 1] or 2 in state[johnnyPos[0]][johnnyPos[1] + 1]:
         state[johnnyPos[0]][johnnyPos[1]].remove(0)
         state[johnnyPos[0]][johnnyPos[1] + 1].append(0)
-        state[johnnyPos[0]][johnnyPos[1] + 1].remove(4 or 2)
+        if 4 in state[johnnyPos[0]][johnnyPos[1] + 1]:
+            state[johnnyPos[0]][johnnyPos[1] + 1].remove(4)
+        elif 2 in state[johnnyPos[0]][johnnyPos[1] + 1]:
+            state[johnnyPos[0]][johnnyPos[1] + 1].remove(2)
         possibleStates.append(state)
         state = copy.deepcopy(initialState)
                 
