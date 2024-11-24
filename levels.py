@@ -16,6 +16,8 @@ from PIL import Image, ImageTk
 #  [[-1, 1], [-1, 1], [-1, 1]]]
 # Each cell is a list becasue a cell can contain Johnny and a ladder
 # Each cell contains an empty tile to account for moving objects. eg Johnny
+# Doesn't need an empty tile in each cell, however, the way the grid was initially constructed required it. This changed when removing tiles was added
+# Methods were created with having a -1 in every list in mind
 
 try:
     with open("saved_level.json", "r") as fload:
