@@ -10,6 +10,7 @@ from PIL import Image, ImageTk
 #3 - crate
 #4 - water
 #5 - ladder
+#6 - roof
 # Levels are stored in the form:
 # [[[-1, 1], [-1, 1], [-1, 1]],
 #  [[-1, 1], [-1, 0], [-1, 1]],
@@ -47,7 +48,8 @@ images = {
     2: load_image("Helmet.png"),
     3: load_image("Crate.png"),
     4: load_image("Water.png"),
-    5: load_image("Ladder.png")
+    5: load_image("Ladder.png"),
+    6: load_image("Roof.png")
 }
 
 cellSize = 50
@@ -153,8 +155,10 @@ waterButton = tk.Button(selectFrame, text="Water", command=lambda: choose_type(4
 waterButton.grid(row=0, column=5)
 ladderButton = tk.Button(selectFrame, text="Ladder", command=lambda: choose_type(5, ladderButton))
 ladderButton.grid(row=0, column=6)
+roofButton = tk.Button(selectFrame, text="Roof", command=lambda: choose_type(6, roofButton))
+roofButton.grid(row=0, column=7)
 # Add all buttons to a list for highlighting
-all_buttons = [emptyButton, johnnyButton, brickButton, helmetButton, crateButton, waterButton, ladderButton]
+all_buttons = [emptyButton, johnnyButton, brickButton, helmetButton, crateButton, waterButton, ladderButton, roofButton]
 
 # Group resize buttons together
 resizeFrame = tk.Frame(root)
