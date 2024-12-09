@@ -81,7 +81,7 @@ def find_next_states(initialState):
     #case 3: Johnny on ladder or roof with ladder or empty space or roof above and below
     #above
     if 5 in state[johnnyPos[0]][johnnyPos[1]] or 6 in state[johnnyPos[0]][johnnyPos[1]]:
-        if state[johnnyPos[0] - 1][johnnyPos[1]] in ([-1, 5], [-1, 6]):
+        if state[johnnyPos[0] - 1][johnnyPos[1]] in ([-1], [-1, 5], [-1, 6]):
             state[johnnyPos[0]][johnnyPos[1]].remove(0)
             state[johnnyPos[0] - 1][johnnyPos[1]].append(0)
             possibleStates.append(state)
@@ -153,6 +153,15 @@ def find_next_states(initialState):
         possibleStates.append(state)
         state = copy.deepcopy(initialState)
         print("case 5")
+
+    #case 6: Johnny in empty tile. Ladder under Johnny. Can climb down ladder
+    if state[johnnyPos[0]][johnnyPos[1]] in [[-1, 0], [0, -1]]:
+        if 5 in state[johnnyPos[0] + 1][johnnyPos[1]]:
+            state[johnnyPos[0]][johnnyPos[1]].remove(0)
+            state[johnnyPos[0] + 1][johnnyPos[1]].append(0)
+            possibleStates.append(state)
+            state = copy.deepcopy(initialState)
+            print("case 6")
                 
     return possibleStates
 
@@ -167,6 +176,6 @@ def main():
     
     #use if wanting to test a current state's outcomes
     with open("saved_level.json", "w") as f:
-        json.dump(nextStates[2], f) #change 0 with number of state you want to visit
+        json.dump(nextStates[0], f) #change 0 with number of state you want to visit
 
 main()
