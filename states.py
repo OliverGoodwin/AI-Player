@@ -31,6 +31,7 @@ def find_next_states(initialState):
             else:
                 state[johnnyPos[0] + i][johnnyPos[1]].append(0)
                 canPlace = True
+        state = fallingTilesTest(state)
         possibleStates.append(state)
         state = copy.deepcopy(initialState)
         print("case 1")
@@ -38,12 +39,18 @@ def find_next_states(initialState):
     #case 2: empty cell or ladder or roof left or right. This move can be a next state, not necesarily the best move though
     #edge cases should not matter here because the level will always be surrounded by a layer of bricks, therefore, Johnny will not be at [0, x] or [y, 0]
     #johnny can fall if no block underneath left or right
-    #if johnny is under a crate, the crate will fall after moving, unless on a ladder. The crate will always end up in Johnny's original position
+    #if johnny is under a crate or helmet, the crate will fall after moving, unless on a ladder. The crate will always end up in Johnny's original position
     #right
     if state[johnnyPos[0]][johnnyPos[1] + 1] in ([-1], [-1, 5], [-1, 6]):
         state[johnnyPos[0]][johnnyPos[1]].remove(0)
+        #Crate above Johnny
         if 3 in state[johnnyPos[0] - 1][johnnyPos[1]] and 5 not in state[johnnyPos[0]][johnnyPos[1]] and 6 not in state[johnnyPos[0]][johnnyPos[1]]:
             state[johnnyPos[0]][johnnyPos[1]].append(3)
+            state[johnnyPos[0] - 1][johnnyPos[1]].remove(3)
+        #Helmet above Johnny
+        if 2 in state[johnnyPos[0] - 1][johnnyPos[1]] and 5 not in state[johnnyPos[0]][johnnyPos[1]] and 6 not in state[johnnyPos[0]][johnnyPos[1]]:
+            state[johnnyPos[0]][johnnyPos[1]].append(2)
+            state[johnnyPos[0] - 1][johnnyPos[1]].remove(2)
         if 5 not in state[johnnyPos[0]][johnnyPos[1] + 1] and 6 not in state[johnnyPos[0]][johnnyPos[1] + 1]:
             i = 0
             canPlace = False
@@ -55,14 +62,21 @@ def find_next_states(initialState):
                     canPlace = True
         else:
             state[johnnyPos[0]][johnnyPos[1] + 1].append(0)
+        state = fallingTilesTest(state)
         possibleStates.append(state)
         state = copy.deepcopy(initialState)
         print("case 2")
     #left
     if state[johnnyPos[0]][johnnyPos[1] - 1] in ([-1], [-1, 5], [-1, 6]):
         state[johnnyPos[0]][johnnyPos[1]].remove(0)
+        #Crate above Johnny
         if 3 in state[johnnyPos[0] - 1][johnnyPos[1]] and 5 not in state[johnnyPos[0]][johnnyPos[1]] and 6 not in state[johnnyPos[0]][johnnyPos[1]]:
             state[johnnyPos[0]][johnnyPos[1]].append(3)
+            state[johnnyPos[0] - 1][johnnyPos[1]].remove(3)
+        #Helmet above Johnny
+        if 2 in state[johnnyPos[0] - 1][johnnyPos[1]] and 5 not in state[johnnyPos[0]][johnnyPos[1]] and 6 not in state[johnnyPos[0]][johnnyPos[1]]:
+            state[johnnyPos[0]][johnnyPos[1]].append(2)
+            state[johnnyPos[0] - 1][johnnyPos[1]].remove(2)
         if 5 not in state[johnnyPos[0]][johnnyPos[1] - 1] and 6 not in state[johnnyPos[0]][johnnyPos[1] - 1]:
             i = 0
             canPlace = False
@@ -74,6 +88,7 @@ def find_next_states(initialState):
                     canPlace = True
         else:
             state[johnnyPos[0]][johnnyPos[1] - 1].append(0)
+        state = fallingTilesTest(state)
         possibleStates.append(state)
         state = copy.deepcopy(initialState)
         print("case 2")
@@ -84,12 +99,14 @@ def find_next_states(initialState):
         if state[johnnyPos[0] - 1][johnnyPos[1]] in ([-1], [-1, 5], [-1, 6]):
             state[johnnyPos[0]][johnnyPos[1]].remove(0)
             state[johnnyPos[0] - 1][johnnyPos[1]].append(0)
+            state = fallingTilesTest(state)
             possibleStates.append(state)
             state = copy.deepcopy(initialState)
             print("case 3")
         if state[johnnyPos[0] + 1][johnnyPos[1]] in ([-1, 5], [-1, 6]):
             state[johnnyPos[0]][johnnyPos[1]].remove(0)
             state[johnnyPos[0] + 1][johnnyPos[1]].append(0)
+            state = fallingTilesTest(state)
             possibleStates.append(state)
             state = copy.deepcopy(initialState)
             print("case 3")
@@ -109,6 +126,7 @@ def find_next_states(initialState):
             else:
                 state[johnnyPos[0] + i][johnnyPos[1] - 2].append(3)
                 canPlace = True
+        state = fallingTilesTest(state)
         possibleStates.append(state)
         state = copy.deepcopy(initialState)
         print("case 4")
@@ -126,6 +144,7 @@ def find_next_states(initialState):
             else:
                 state[johnnyPos[0] + i][johnnyPos[1] + 2].append(3)
                 canPlace = True
+        state = fallingTilesTest(state)
         possibleStates.append(state)
         state = copy.deepcopy(initialState)
         print("case 4")
@@ -139,6 +158,7 @@ def find_next_states(initialState):
             state[johnnyPos[0]][johnnyPos[1] - 1].remove(4)
         elif 2 in state[johnnyPos[0]][johnnyPos[1] - 1]:
             state[johnnyPos[0]][johnnyPos[1] - 1].remove(2)
+        state = fallingTilesTest(state)
         possibleStates.append(state)
         state = copy.deepcopy(initialState)
         print("case 5")
@@ -150,6 +170,7 @@ def find_next_states(initialState):
             state[johnnyPos[0]][johnnyPos[1] + 1].remove(4)
         elif 2 in state[johnnyPos[0]][johnnyPos[1] + 1]:
             state[johnnyPos[0]][johnnyPos[1] + 1].remove(2)
+        state = fallingTilesTest(state)
         possibleStates.append(state)
         state = copy.deepcopy(initialState)
         print("case 5")
@@ -159,12 +180,31 @@ def find_next_states(initialState):
         if 5 in state[johnnyPos[0] + 1][johnnyPos[1]]:
             state[johnnyPos[0]][johnnyPos[1]].remove(0)
             state[johnnyPos[0] + 1][johnnyPos[1]].append(0)
+            state = fallingTilesTest(state)
             possibleStates.append(state)
             state = copy.deepcopy(initialState)
             print("case 6")
                 
     return possibleStates
 
+
+#If anything is still floating after this, loop throught the level until nothing is floating.
+#This could cause the computational power to become large, maybe try to do this in the cases later.
+#Start from the bottom and work up, as an item could fall which could make another item fall.
+def fallingTilesTest(state):
+    for y in range(len(level) - 1, -1, -1):  # Start from the last row
+        for x in range(len(level[y])):
+            if state[y][x] in [[-1, 2], [-1, 3]]:
+                tile = state[y][x][1]  # Extract the tile type (2 or 3)
+                
+                i = 1  # Start checking one row below
+                while y + i < len(level) and state[y + i][x] == [-1]:  # Check bounds and empty space
+                    i += 1
+                
+                # Place the tile in the row above the first non-empty space
+                state[y + i - 1][x].append(tile)
+                state[y][x].remove(tile)
+    return state
 
 def main():
     nextStates = find_next_states(level)
