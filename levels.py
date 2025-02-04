@@ -116,7 +116,7 @@ def decrease_level_width():
 
 
 def increase_level_height():
-    level.append([[-1]] * len(level[0]))
+    level.append([[-1] for _ in range(len(level[0]))])  #Creates a unique list instead of a shared list
     update_canvas()
 
 
