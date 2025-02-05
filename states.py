@@ -2,13 +2,6 @@ import json
 import copy
 
 
-try:
-    fload = open("saved_level.json", "r")
-    level = json.load(fload)
-except:
-    level = [[1]]
-
-
 def find_next_states(initialState):
     #use deepcopy when resetting states to avoid variable in possible states list changing as well
     state = copy.deepcopy(initialState)
@@ -192,13 +185,13 @@ def find_next_states(initialState):
 #This could cause the computational power to become large, maybe try to do this in the cases later.
 #Start from the bottom and work up, as an item could fall which could make another item fall.
 def fallingTilesTest(state):
-    for y in range(len(level) - 1, -1, -1):  # Start from the last row
-        for x in range(len(level[y])):
+    for y in range(len(state) - 1, -1, -1):  # Start from the last row
+        for x in range(len(state[y])):
             if state[y][x] in [[-1, 2], [-1, 3]]:
                 tile = state[y][x][1]  # Extract the tile type (2 or 3)
                 
                 i = 1  # Start checking one row below
-                while y + i < len(level) and state[y + i][x] == [-1]:  # Check bounds and empty space
+                while y + i < len(state) and state[y + i][x] == [-1]:  # Check bounds and empty space
                     i += 1
                 
                 # Place the tile in the row above the first non-empty space
@@ -206,7 +199,13 @@ def fallingTilesTest(state):
                 state[y][x].remove(tile)
     return state
 
-def main():
+"""def main():
+    try:
+        fload = open("saved_level.json", "r")
+        level = json.load(fload)
+    except:
+        level = [[1]]
+
     nextStates = find_next_states(level)
 
     for num, i in enumerate(nextStates):
@@ -216,6 +215,6 @@ def main():
     
     #use if wanting to test a current state's outcomes
     with open("saved_level.json", "w") as f:
-        json.dump(nextStates[0], f) #change 0 with number of state you want to visit
+        json.dump(nextStates[1], f) #change 0 with number of state you want to visit
 
-main()
+main()"""
