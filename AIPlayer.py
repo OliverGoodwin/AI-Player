@@ -1,6 +1,5 @@
 import json
 import heapq
-import copy
 from states import find_next_states
 
 try:
@@ -38,8 +37,11 @@ def heuristic(state):
         source = state.playerPos[0]
         dest = state.helmetPos[0]
     except:
-        return 0
-    return abs(source[0] - dest[0]) + abs(source[1] - dest[1])
+        return float('inf')
+    
+    if not find_next_states(state.grid):
+        return float('inf')
+    return min(abs(source[0] - dest[0]) + abs(source[1] - dest[1]) for dest in state.helmetPos)
 
 def A_Star_Search(initialState):
     openList = []
@@ -47,12 +49,10 @@ def A_Star_Search(initialState):
 
     startNode = Node(initialState)
     heapq.heappush(openList, startNode)
-    print(openList)
 
     while openList:
         
         currentNode = heapq.heappop(openList)
-        print(currentNode.grid)
 
         if not currentNode.helmetPos:
             print("No more helmets")
@@ -66,16 +66,12 @@ def A_Star_Search(initialState):
 
         #Cost is always 1 as of now, change to cost when adding macro moves
         for nextState in find_next_states(currentNode.grid):
-            nextState = Node(nextState)
-            if nextState.grid in closedList:
+            if nextState in closedList:
                 continue
             
             g = currentNode.g + 1#Change this to cost when adding macro moves
-            h = heuristic(nextState)
-            neighbourNode = Node(nextState.grid, parent=currentNode, g=g, h=h)
-
-            if any(n for n in openList if n.f <= neighbourNode.f):
-                continue
+            h = heuristic(Node(nextState))
+            neighbourNode = Node(nextState, parent=currentNode, g=g, h=h)
             
             heapq.heappush(openList, neighbourNode)
 

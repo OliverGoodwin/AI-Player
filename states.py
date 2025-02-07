@@ -27,7 +27,7 @@ def find_next_states(initialState):
         state = fallingTilesTest(state)
         possibleStates.append(state)
         state = copy.deepcopy(initialState)
-        print("case 1")
+        #print("case 1")
     
     #case 2: empty cell or ladder or roof left or right. This move can be a next state, not necesarily the best move though
     #edge cases should not matter here because the level will always be surrounded by a layer of bricks, therefore, Johnny will not be at [0, x] or [y, 0]
@@ -58,7 +58,7 @@ def find_next_states(initialState):
         state = fallingTilesTest(state)
         possibleStates.append(state)
         state = copy.deepcopy(initialState)
-        print("case 2")
+        #print("case 2")
     #left
     if state[johnnyPos[0]][johnnyPos[1] - 1] in ([-1], [-1, 5], [-1, 6]):
         state[johnnyPos[0]][johnnyPos[1]].remove(0)
@@ -84,7 +84,7 @@ def find_next_states(initialState):
         state = fallingTilesTest(state)
         possibleStates.append(state)
         state = copy.deepcopy(initialState)
-        print("case 2")
+        #print("case 2")
 
     #case 3: Johnny on ladder or roof with ladder or empty space or roof above and below
     #above
@@ -95,14 +95,14 @@ def find_next_states(initialState):
             state = fallingTilesTest(state)
             possibleStates.append(state)
             state = copy.deepcopy(initialState)
-            print("case 3")
+            #print("case 3")
         if state[johnnyPos[0] + 1][johnnyPos[1]] in ([-1, 5], [-1, 6]):
             state[johnnyPos[0]][johnnyPos[1]].remove(0)
             state[johnnyPos[0] + 1][johnnyPos[1]].append(0)
             state = fallingTilesTest(state)
             possibleStates.append(state)
             state = copy.deepcopy(initialState)
-            print("case 3")
+            #print("case 3")
     
     #case 4: crate left or right. Nothing behing the crate. Johnny can push the crate
     #left
@@ -122,7 +122,7 @@ def find_next_states(initialState):
         state = fallingTilesTest(state)
         possibleStates.append(state)
         state = copy.deepcopy(initialState)
-        print("case 4")
+        #print("case 4")
     #right
     if 3 in state[johnnyPos[0]][johnnyPos[1] + 1] and state[johnnyPos[0]][johnnyPos[1] + 2] == [-1]:
         state[johnnyPos[0]][johnnyPos[1]].remove(0)
@@ -140,7 +140,7 @@ def find_next_states(initialState):
         state = fallingTilesTest(state)
         possibleStates.append(state)
         state = copy.deepcopy(initialState)
-        print("case 4")
+        #print("case 4")
 
     #case 5: water or helmet left or right. Johnny removes the water or helmet.
     #left
@@ -154,7 +154,7 @@ def find_next_states(initialState):
         state = fallingTilesTest(state)
         possibleStates.append(state)
         state = copy.deepcopy(initialState)
-        print("case 5")
+        #print("case 5")
     #right
     if 4 in state[johnnyPos[0]][johnnyPos[1] + 1] or 2 in state[johnnyPos[0]][johnnyPos[1] + 1]:
         state[johnnyPos[0]][johnnyPos[1]].remove(0)
@@ -166,7 +166,7 @@ def find_next_states(initialState):
         state = fallingTilesTest(state)
         possibleStates.append(state)
         state = copy.deepcopy(initialState)
-        print("case 5")
+        #print("case 5")
 
     #case 6: Johnny in empty tile. Ladder under Johnny. Can climb down ladder
     if state[johnnyPos[0]][johnnyPos[1]] in [[-1, 0], [0, -1]]:
@@ -176,7 +176,7 @@ def find_next_states(initialState):
             state = fallingTilesTest(state)
             possibleStates.append(state)
             state = copy.deepcopy(initialState)
-            print("case 6")
+            #print("case 6")
                 
     return possibleStates
 
