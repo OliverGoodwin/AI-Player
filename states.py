@@ -168,9 +168,9 @@ def find_next_states(initialState):
         state = copy.deepcopy(initialState)
         #print("case 5")
 
-    #case 6: Johnny in empty tile. Ladder under Johnny. Can climb down ladder
+    #case 6: Johnny in empty tile. Ladder or roof under Johnny. Can climb down ladder
     if state[johnnyPos[0]][johnnyPos[1]] in [[-1, 0], [0, -1]]:
-        if 5 in state[johnnyPos[0] + 1][johnnyPos[1]]:
+        if 5 in state[johnnyPos[0] + 1][johnnyPos[1]] or 6 in state[johnnyPos[0] + 1][johnnyPos[1]]:
             state[johnnyPos[0]][johnnyPos[1]].remove(0)
             state[johnnyPos[0] + 1][johnnyPos[1]].append(0)
             state = fallingTilesTest(state)
@@ -187,7 +187,7 @@ def find_next_states(initialState):
 def fallingTilesTest(state):
     for y in range(len(state) - 1, -1, -1):  # Start from the last row
         for x in range(len(state[y])):
-            if state[y][x] in [[-1, 2], [-1, 3]]:
+            if state[y][x] in [[-1, 2], [-1, 3], [-1, 0]]:
                 tile = state[y][x][1]  # Extract the tile type (2 or 3)
                 
                 i = 1  # Start checking one row below
@@ -199,7 +199,7 @@ def fallingTilesTest(state):
                 state[y][x].remove(tile)
     return state
 
-"""def main():
+def main():
     try:
         fload = open("saved_level.json", "r")
         level = json.load(fload)
@@ -214,7 +214,7 @@ def fallingTilesTest(state):
 
     
     #use if wanting to test a current state's outcomes
-    with open("saved_level.json", "w") as f:
-        json.dump(nextStates[1], f) #change 0 with number of state you want to visit
+    """with open("saved_level.json", "w") as f:
+        json.dump(nextStates[2], f) #change 0 with number of state you want to visit"""
 
-main()"""
+main()

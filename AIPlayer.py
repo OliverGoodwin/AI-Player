@@ -1,5 +1,5 @@
 import json
-import heapq
+import copy
 from states import find_next_states
 
 try:
@@ -35,47 +35,65 @@ class Node:
 def heuristic(state):
     try:
         source = state.playerPos[0]
-        dest = state.helmetPos[0]
+        if not find_next_states(state.grid):
+            return float('inf')
+    
+        """total_distance = 0
+        for dest in state.helmetPos:
+            total_distance += abs(source[0] - dest[0]) + abs(source[1] - dest[1])"""
+        min_distance = float('inf')
+        for dest in state.helmetPos:
+            distance = (abs(source[0] - dest[0]) + abs(source[1] - dest[1]))
+            if distance < min_distance:
+                min_distance = distance
+
+        return min_distance
     except:
         return float('inf')
+
+
+#Iterative-Deepening
+def IDAStar(currentNode, limit, closedList):
+    if currentNode.f > limit:
+        return currentNode.f
     
-    if not find_next_states(state.grid):
-        return float('inf')
-    return min(abs(source[0] - dest[0]) + abs(source[1] - dest[1]) for dest in state.helmetPos)
+    if not currentNode.helmetPos:
+        print("No more helmets")
+        path = []
+        while currentNode:
+            path.append(currentNode.grid)
+            currentNode = currentNode.parent
+        return path[::-1]
+    
+    closedList.append(copy.deepcopy(currentNode.grid))
+
+    minf = float('inf')
+    for nextState in find_next_states(currentNode.grid):
+        if nextState in closedList:
+            continue
+
+        g = currentNode.g + 1#Change this to cost when adding macro moves
+        h = heuristic(Node(nextState))
+        neighbourNode = Node(nextState, parent=currentNode, g=g, h=h)
+        result = IDAStar(neighbourNode, limit, closedList)
+
+        if isinstance(result, list):
+            return result
+        minf = min(minf, result)
+    
+    print(f"length of closed list: {len(closedList)}")
+    return minf
 
 def A_Star_Search(initialState):
-    openList = []
-    closedList = []
+    limit = heuristic(Node(initialState))
+    while True:
+        closedList = []
+        result = IDAStar(Node(initialState), limit, closedList)
 
-    startNode = Node(initialState)
-    heapq.heappush(openList, startNode)
-
-    while openList:
+        if isinstance(result, list):
+            return result
         
-        currentNode = heapq.heappop(openList)
-
-        if not currentNode.helmetPos:
-            print("No more helmets")
-            path = []
-            while currentNode:
-                path.append(currentNode.grid)
-                currentNode = currentNode.parent
-            return path[::-1]
-        
-        closedList.append(currentNode.grid)
-
-        #Cost is always 1 as of now, change to cost when adding macro moves
-        for nextState in find_next_states(currentNode.grid):
-            if nextState in closedList:
-                continue
-            
-            g = currentNode.g + 1#Change this to cost when adding macro moves
-            h = heuristic(Node(nextState))
-            neighbourNode = Node(nextState, parent=currentNode, g=g, h=h)
-            
-            heapq.heappush(openList, neighbourNode)
-
-    return None
+        limit = result
 
 
 def main():
