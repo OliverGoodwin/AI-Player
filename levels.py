@@ -11,6 +11,7 @@ from PIL import Image, ImageTk
 #4 - water
 #5 - ladder
 #6 - roof
+#7 - still helmet
 # Levels are stored in the form:
 # [[[-1, 1], [-1, 1], [-1, 1]],
 #  [[-1, 1], [-1, 0], [-1, 1]],
@@ -33,6 +34,7 @@ except:
 
 
 root = tk.Tk()
+filepath = "Assets/"
 
 # Resize the images
 def load_image(file):
@@ -42,14 +44,15 @@ def load_image(file):
     return ImageTk.PhotoImage(img)
 
 images = {
-    -1: load_image("Empty.png"),
-    0: load_image("Johnny.png"),
-    1: load_image("Brick.png"),
-    2: load_image("Helmet.png"),
-    3: load_image("Crate.png"),
-    4: load_image("Water.png"),
-    5: load_image("Ladder.png"),
-    6: load_image("Roof.png")
+    -1: load_image(filepath + "Empty.png"),
+    0: load_image(filepath + "Johnny.png"),
+    1: load_image(filepath + "Brick.png"),
+    2: load_image(filepath + "Helmet.png"),
+    3: load_image(filepath + "Crate.png"),
+    4: load_image(filepath + "Water.png"),
+    5: load_image(filepath + "Ladder.png"),
+    6: load_image(filepath + "Roof.png"),
+    7: load_image(filepath + "StillHelmet.png")
 }
 
 cellSize = 50
@@ -157,8 +160,10 @@ ladderButton = tk.Button(selectFrame, text="Ladder", command=lambda: choose_type
 ladderButton.grid(row=0, column=6)
 roofButton = tk.Button(selectFrame, text="Roof", command=lambda: choose_type(6, roofButton))
 roofButton.grid(row=0, column=7)
+stillHelmetButton = tk.Button(selectFrame, text="Still Helmet", command=lambda: choose_type(7, stillHelmetButton))
+stillHelmetButton.grid(row=0, column=8)
 # Add all buttons to a list for highlighting
-all_buttons = [emptyButton, johnnyButton, brickButton, helmetButton, crateButton, waterButton, ladderButton, roofButton]
+all_buttons = [emptyButton, johnnyButton, brickButton, helmetButton, crateButton, waterButton, ladderButton, roofButton, stillHelmetButton]
 
 # Group resize buttons together
 resizeFrame = tk.Frame(root)

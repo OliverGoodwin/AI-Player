@@ -1,8 +1,9 @@
 import json
-import copy
 from states import find_next_states
 import numpy as np
-import time  # Importing time module
+import time
+from python_tsp.exact import solve_tsp_dynamic_programming
+
 
 try:
     fload = open("saved_level.json", "r")
@@ -12,14 +13,11 @@ except:
 
 
 def convert_to_tuple(obj):
-    if isinstance(obj, np.ndarray):
-        # Recursively convert each ndarray into a tuple
-        return tuple(convert_to_tuple(x) for x in obj)
-    elif isinstance(obj, list):
-        # If the object is a list, convert each element into a tuple
+    if isinstance(obj, np.ndarray) or isinstance(obj, list):
+        # Recursively convert each array and list into a tuple
         return tuple(convert_to_tuple(x) for x in obj)
     else:
-        return obj  # Return the object as is (non-ndarray, non-list)
+        return obj  # Return the object as is (non-array, non-list)
 
 
 class Node:
@@ -35,19 +33,37 @@ class Node:
                     break
         for y in range(len(state)):
             for x in range(len(state[y])):
-                if 2 in state[y][x]:
+                if 2 in state[y][x] or 7 in state[y][x]:
                     self.helmetPos.append((y, x))
+
+        self.distanceMatrix = self.create_distance_matrix()
+
         self.g = g  # Cost from start to this node
         self.h = h  # Heuristic cost to the goal
         self.f = g + h  # Total cost (f = g + h)
 
     def __lt__(self, other):
         return self.f < other.f  # Compare based on the f value
+    
+    def manhattan_distance(self, pos1, pos2):
+        return abs(pos2[0] - pos1[0]) + abs(pos2[1] - pos1[1])
+    
+    def create_distance_matrix(self):
+        positions = self.playerPos + self.helmetPos
+        n = len(positions)
+        distMatrix = [[0] * n for _ in range(n)]
+
+        for i in range(n):
+            for j in range(1, n): #Start at 1 to make distance from helmet to player 0
+                if i != j:
+                    distMatrix[i][j] = self.manhattan_distance(positions[i], positions[j])
+
+        return distMatrix
 
 
 def heuristic(state):
     try:
-        source = state.playerPos[0]
+        """source = state.playerPos[0]
         if not find_next_states(state.grid):
             return float('inf')
     
@@ -57,7 +73,14 @@ def heuristic(state):
             if distance < min_distance:
                 min_distance = distance
 
-        return min_distance
+        return min_distance"""
+
+        #Use python_tsp library to solve Travelling Salesperson Problem
+        #print(state.distanceMatrix)
+        distMatrix = np.array(state.distanceMatrix)
+        tspPath, distance = solve_tsp_dynamic_programming(distMatrix)
+        return distance
+
     except:
         return float('inf')
 
@@ -102,6 +125,7 @@ def IDAStar(currentNode, limit, closedSet):
 
 def A_Star_Search(initialState):
     limit = heuristic(Node(initialState))
+    print(limit)
     while True:
         closedSet = set()
         result = IDAStar(Node(initialState), limit, closedSet)
@@ -119,6 +143,10 @@ def main():
 
     with open("saved_level.json", "w") as f:
         json.dump(path[len(path) - 1], f)
+
+    testNode = Node(level)
+    print(heuristic(testNode))
+    print(testNode.distanceMatrix)
 
     end_time = time.time()  # End the timer
     elapsed_time = end_time - start_time  # Calculate elapsed time

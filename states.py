@@ -142,27 +142,31 @@ def find_next_states(initialState):
         state = copy.deepcopy(initialState)
         #print("case 4")
 
-    #case 5: water or helmet left or right. Johnny removes the water or helmet.
+    #case 5: water or helmet or still helmet left or right. Johnny removes the water or helmet.
     #left
-    if 4 in state[johnnyPos[0]][johnnyPos[1] - 1]or 2 in state[johnnyPos[0]][johnnyPos[1] - 1]:
+    if 4 in state[johnnyPos[0]][johnnyPos[1] - 1] or 2 in state[johnnyPos[0]][johnnyPos[1] - 1] or 7 in state[johnnyPos[0]][johnnyPos[1] - 1]:
         state[johnnyPos[0]][johnnyPos[1]].remove(0)
         state[johnnyPos[0]][johnnyPos[1] - 1].append(0)
         if 4 in state[johnnyPos[0]][johnnyPos[1] - 1]:
             state[johnnyPos[0]][johnnyPos[1] - 1].remove(4)
         elif 2 in state[johnnyPos[0]][johnnyPos[1] - 1]:
             state[johnnyPos[0]][johnnyPos[1] - 1].remove(2)
+        elif 7 in state[johnnyPos[0]][johnnyPos[1] - 1]:
+            state[johnnyPos[0]][johnnyPos[1] - 1].remove(7)
         state = fallingTilesTest(state)
         possibleStates.append(state)
         state = copy.deepcopy(initialState)
         #print("case 5")
     #right
-    if 4 in state[johnnyPos[0]][johnnyPos[1] + 1] or 2 in state[johnnyPos[0]][johnnyPos[1] + 1]:
+    if 4 in state[johnnyPos[0]][johnnyPos[1] + 1] or 2 in state[johnnyPos[0]][johnnyPos[1] + 1] or 7 in state[johnnyPos[0]][johnnyPos[1] + 1]:
         state[johnnyPos[0]][johnnyPos[1]].remove(0)
         state[johnnyPos[0]][johnnyPos[1] + 1].append(0)
         if 4 in state[johnnyPos[0]][johnnyPos[1] + 1]:
             state[johnnyPos[0]][johnnyPos[1] + 1].remove(4)
         elif 2 in state[johnnyPos[0]][johnnyPos[1] + 1]:
             state[johnnyPos[0]][johnnyPos[1] + 1].remove(2)
+        elif 7 in state[johnnyPos[0]][johnnyPos[1] + 1]:
+            state[johnnyPos[0]][johnnyPos[1] + 1].remove(7)
         state = fallingTilesTest(state)
         possibleStates.append(state)
         state = copy.deepcopy(initialState)
@@ -199,7 +203,7 @@ def fallingTilesTest(state):
                 state[y][x].remove(tile)
     return state
 
-def main():
+"""def main():
     try:
         fload = open("saved_level.json", "r")
         level = json.load(fload)
@@ -214,7 +218,7 @@ def main():
 
     
     #use if wanting to test a current state's outcomes
-    """with open("saved_level.json", "w") as f:
-        json.dump(nextStates[2], f) #change 0 with number of state you want to visit"""
+    with open("saved_level.json", "w") as f:
+        json.dump(nextStates[0], f) #change 0 with number of state you want to visit
 
-main()
+main()"""
