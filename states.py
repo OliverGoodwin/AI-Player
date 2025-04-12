@@ -7,6 +7,7 @@ def find_next_states(initialState):
     state = copy.deepcopy(initialState)
 
     possibleStates = []
+    possibleDirections = []
 
     for row, y in enumerate(state):
         for col, list in enumerate(y):
@@ -26,6 +27,7 @@ def find_next_states(initialState):
                 canPlace = True
         state = fallingTilesTest(state)
         possibleStates.append(state)
+        possibleDirections.append("down")
         state = copy.deepcopy(initialState)
         #print("case 1")
     
@@ -57,6 +59,7 @@ def find_next_states(initialState):
             state[johnnyPos[0]][johnnyPos[1] + 1].append(0)
         state = fallingTilesTest(state)
         possibleStates.append(state)
+        possibleDirections.append("right")
         state = copy.deepcopy(initialState)
         #print("case 2")
     #left
@@ -83,24 +86,28 @@ def find_next_states(initialState):
             state[johnnyPos[0]][johnnyPos[1] - 1].append(0)
         state = fallingTilesTest(state)
         possibleStates.append(state)
+        possibleDirections.append("left")
         state = copy.deepcopy(initialState)
         #print("case 2")
 
     #case 3: Johnny on ladder or roof with ladder or empty space or roof above and below
-    #above
     if 5 in state[johnnyPos[0]][johnnyPos[1]] or 6 in state[johnnyPos[0]][johnnyPos[1]]:
+        #up
         if state[johnnyPos[0] - 1][johnnyPos[1]] in ([-1], [-1, 5], [-1, 6]):
             state[johnnyPos[0]][johnnyPos[1]].remove(0)
             state[johnnyPos[0] - 1][johnnyPos[1]].append(0)
             state = fallingTilesTest(state)
             possibleStates.append(state)
+            possibleDirections.append("up")
             state = copy.deepcopy(initialState)
             #print("case 3")
+        #down
         if state[johnnyPos[0] + 1][johnnyPos[1]] in ([-1, 5], [-1, 6]):
             state[johnnyPos[0]][johnnyPos[1]].remove(0)
             state[johnnyPos[0] + 1][johnnyPos[1]].append(0)
             state = fallingTilesTest(state)
             possibleStates.append(state)
+            possibleDirections.append("down")
             state = copy.deepcopy(initialState)
             #print("case 3")
     
@@ -121,6 +128,7 @@ def find_next_states(initialState):
                 canPlace = True
         state = fallingTilesTest(state)
         possibleStates.append(state)
+        possibleDirections.append("left")
         state = copy.deepcopy(initialState)
         #print("case 4")
     #right
@@ -139,6 +147,7 @@ def find_next_states(initialState):
                 canPlace = True
         state = fallingTilesTest(state)
         possibleStates.append(state)
+        possibleDirections.append("right")
         state = copy.deepcopy(initialState)
         #print("case 4")
 
@@ -155,6 +164,7 @@ def find_next_states(initialState):
             state[johnnyPos[0]][johnnyPos[1] - 1].remove(7)
         state = fallingTilesTest(state)
         possibleStates.append(state)
+        possibleDirections.append("left")
         state = copy.deepcopy(initialState)
         #print("case 5")
     #right
@@ -169,6 +179,7 @@ def find_next_states(initialState):
             state[johnnyPos[0]][johnnyPos[1] + 1].remove(7)
         state = fallingTilesTest(state)
         possibleStates.append(state)
+        possibleDirections.append("right")
         state = copy.deepcopy(initialState)
         #print("case 5")
 
@@ -179,10 +190,11 @@ def find_next_states(initialState):
             state[johnnyPos[0] + 1][johnnyPos[1]].append(0)
             state = fallingTilesTest(state)
             possibleStates.append(state)
+            possibleDirections.append("down")
             state = copy.deepcopy(initialState)
             #print("case 6")
                 
-    return possibleStates
+    return possibleStates, possibleDirections
 
 
 #If anything is still floating after this, loop throught the level until nothing is floating.
@@ -210,7 +222,7 @@ def fallingTilesTest(state):
     except:
         level = [[1]]
 
-    nextStates = find_next_states(level)
+    nextStates, path = find_next_states(level)
 
     for num, i in enumerate(nextStates):
         print(num)

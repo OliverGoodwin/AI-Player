@@ -12,23 +12,23 @@ from PIL import Image, ImageTk
 #5 - ladder
 #6 - roof
 #7 - still helmet
-# Levels are stored in the form:
-# [[[-1, 1], [-1, 1], [-1, 1]],
-#  [[-1, 1], [-1, 0], [-1, 1]],
-#  [[-1, 1], [-1, 1], [-1, 1]]]
-# Each cell is a list becasue a cell can contain Johnny and a ladder
-# Each cell contains an empty tile to account for moving objects. eg Johnny
-# Doesn't need an empty tile in each cell, however, the way the grid was initially constructed required it. This changed when removing tiles was added
-# Methods were created with having a -1 in every list in mind
+#Levels are stored in the form:
+#[[[-1, 1], [-1, 1], [-1, 1]],
+# [[-1, 1], [-1, 0], [-1, 1]],
+# [[-1, 1], [-1, 1], [-1, 1]]]
+#Each cell is a list becasue a cell can contain Johnny and a ladder
+#Each cell contains an empty tile to account for moving objects. eg Johnny
+#Doesn't need an empty tile in each cell, however, the way the grid was initially constructed required it. This changed when removing tiles was added
+#Methods were created with having a -1 in every list in mind
 
 try:
     with open("saved_level.json", "r") as fload:
         level = json.load(fload)
-        # Ensure all cells are lists (in case some are integers like -1 or 0)
+        #Ensure all cells are lists (in case some are integers like -1 or 0)
         for y in range(len(level)):
             for x in range(len(level[y])):
                 if not isinstance(level[y][x], list):
-                    level[y][x] = [level[y][x]]  # Convert single integers to a list
+                    level[y][x] = [level[y][x]]  #Convert single integers to a list
 except:
     level = [[[-1, 1], [-1, 1], [-1, 1], [-1, 1], [-1, 1], [-1, 1], [-1, 1], [-1, 1], [-1, 1], [-1, 1], [-1, 1]], [[-1, 1], [-1], [-1], [-1], [-1], [-1], [-1], [-1], [-1], [-1], [-1, 1]], [[-1, 1], [-1], [-1, 0], [-1], [-1], [-1], [-1, 3], [-1], [-1], [-1, 2], [-1, 1]], [[-1, 1], [-1, 1], [-1, 1], [-1, 1], [-1, 1], [-1, 1], [-1, 1], [-1], [-1, 1], [-1, 1], [-1, 1]], [[-1], [-1], [-1], [-1], [-1], [-1], [-1, 1], [-1, 1], [-1, 1], [-1], [-1]]]  # Default level if the file doesn't exist or is empty
 
@@ -36,7 +36,7 @@ except:
 root = tk.Tk()
 filepath = "Assets/"
 
-# Resize the images
+#Resize the images
 def load_image(file):
     size = (50, 50)
     img = Image.open(file)
@@ -93,16 +93,16 @@ def remove_type(event):
 
 
 def draw_grid():
-    canvas.delete("all")  # Clear the canvas
-    for y, row in enumerate(level):  # Iterate through the rows
-        for x, cell in enumerate(row):  # Iterate through the columns (cells)
-            for type in cell:  # For each block in the cell (it could be more than one)
+    canvas.delete("all")  #Clear the canvas
+    for y, row in enumerate(level):  #Iterate through the rows
+        for x, cell in enumerate(row):  #Iterate through the columns (cells)
+            for type in cell:  #For each block in the cell (it could be more than one)
                 img = images[type]
                 canvas.create_image(x * cellSize, y * cellSize, anchor="nw", image=img)
 
 
 def highlight_button(button):
-    for x in all_buttons:
+    for x in allButtons:
         x.config(bg="SystemButtonFace")
     button.config(bg="lightblue")
 
@@ -134,16 +134,16 @@ def save_level():
         json.dump(level, f)
 
 
-# Left click triggers event to place blocks
+#Left click triggers event to place blocks
 canvas.bind("<Button-1>", draw_type)
-# Right click triggers event to remove blocks
+#Right click triggers event to remove blocks
 canvas.bind("<Button-3>", remove_type)
 
-# Group selection buttons together
+#Group selection buttons together
 selectFrame = tk.Frame(root)
 selectFrame.grid(row=1, column=0, columnspan=5, pady=10)
 
-# Create buttons for changing the type of block
+#Create buttons for changing the type of block
 emptyButton = tk.Button(selectFrame, text="Empty", command=lambda: choose_type(-1, emptyButton))
 emptyButton.grid(row=0, column=0)
 johnnyButton = tk.Button(selectFrame, text="Johnny", command=lambda: choose_type(0, johnnyButton))
@@ -162,14 +162,14 @@ roofButton = tk.Button(selectFrame, text="Roof", command=lambda: choose_type(6, 
 roofButton.grid(row=0, column=7)
 stillHelmetButton = tk.Button(selectFrame, text="Still Helmet", command=lambda: choose_type(7, stillHelmetButton))
 stillHelmetButton.grid(row=0, column=8)
-# Add all buttons to a list for highlighting
-all_buttons = [emptyButton, johnnyButton, brickButton, helmetButton, crateButton, waterButton, ladderButton, roofButton, stillHelmetButton]
+#Add all buttons to a list for highlighting
+allButtons = [emptyButton, johnnyButton, brickButton, helmetButton, crateButton, waterButton, ladderButton, roofButton, stillHelmetButton]
 
-# Group resize buttons together
+#Group resize buttons together
 resizeFrame = tk.Frame(root)
 resizeFrame.grid(row=3, column=0, columnspan=5, pady=10)
 
-# Create buttons for adding and removing columns and edges
+#Create buttons for adding and removing columns and edges
 addRowButton = tk.Button(resizeFrame, text="Add Row", command=lambda: increase_level_height())
 addRowButton.grid(row=0, column=0)
 addColButton = tk.Button(resizeFrame, text="Add Col", command=lambda: increase_level_width())
@@ -179,7 +179,7 @@ delRowButton.grid(row=1, column=0)
 delColButton = tk.Button(resizeFrame, text="Del Col", command=lambda: decrease_level_width())
 delColButton.grid(row=1, column=5)
 
-# Create button for saving
+#Create button for saving
 saveButton = tk.Button(root, text="Save Level", command=lambda: save_level())
 saveButton.grid(row=4, column=0, columnspan=5, pady=10)
 
