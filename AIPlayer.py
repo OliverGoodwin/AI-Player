@@ -140,7 +140,8 @@ def A_Star_Search(initialState):
 
 
 def main():
-    for levelNum in range(1, 10):
+    times = [9999] * 35
+    for levelNum in range(28, 36):
         try:
             fload = open(f"Levels/Level{levelNum}.json", "r")
             level = json.load(fload)
@@ -156,5 +157,6 @@ def main():
         elapsedTime = endTime - startTime  #Calculate elapsed time
         print(f"Execution time: {elapsedTime:.4f} seconds")  #Print the execution time
         print(f"Directions: {directions}")
-
+        times[levelNum-1] = elapsedTime
+    print(times)
 main()
