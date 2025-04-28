@@ -201,16 +201,16 @@ def find_next_states(initialState):
 #This could cause the computational power to become large, maybe try to do this in the cases later.
 #Start from the bottom and work up, as an item could fall which could make another item fall.
 def fallingTilesTest(state):
-    for y in range(len(state) - 1, -1, -1):  # Start from the last row
+    for y in range(len(state) - 1, -1, -1):  #Start from the last row
         for x in range(len(state[y])):
             if state[y][x] in [[-1, 2], [-1, 3], [-1, 0]]:
-                tile = state[y][x][1]  # Extract the tile type (2 or 3)
+                tile = state[y][x][1]  #Extract the tile type (0, 2 or 3)
                 
-                i = 1  # Start checking one row below
-                while y + i < len(state) and state[y + i][x] == [-1]:  # Check bounds and empty space
+                i = 1  #Start checking one row below
+                while y + i < len(state) and state[y + i][x] == [-1]:  #Check bounds and empty space
                     i += 1
                 
-                # Place the tile in the row above the first non-empty space
+                #Place the tile in the row above the first non-empty space
                 state[y + i - 1][x].append(tile)
                 state[y][x].remove(tile)
     return state

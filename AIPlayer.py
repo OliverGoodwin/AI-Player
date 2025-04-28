@@ -18,6 +18,73 @@ def convert_to_tuple(obj):
         return tuple(convert_to_tuple(x) for x in obj)
     else:
         return obj  #Return the object as is (non-array, non-list)
+    
+def min_distance_heuristic(state):
+    source = state.playerPos[0]
+    
+    minDistance = float('inf')
+    for dest in state.helmetPos:
+        #Calculate Manhattan distance
+        distance = (abs(source[0] - dest[0]) + abs(source[1] - dest[1]))
+        #Find minimum
+        if distance < minDistance:
+            minDistance = distance
+
+    return minDistance
+
+def total_distance_heuristic(state):
+    source = state.playerPos[0]
+    
+    totalDistance = 0
+    for dest in state.helmetPos:
+        #Calculate Manhattan distance
+        distance = (abs(source[0] - dest[0]) + abs(source[1] - dest[1]))
+        #Find total
+        totalDistance += distance
+
+    return totalDistance
+
+def TSP_heuristic(state):
+    #Use python_tsp library to solve Travelling Salesperson Problem
+    distMatrix = np.array(state.distanceMatrix)
+    if len(state.helmetPos) < 10:
+        tspPath, distance = solve_tsp_dynamic_programming(distMatrix)
+    else:
+        distance = total_distance_heuristic(state)
+    return distance
+
+def if_crates_lower(state):
+    reward = 0
+    initialCrateRows = {}
+    currentCrateRows = {}
+
+    #Count initial crates per row
+    for initialPos in levelNode.cratePos:
+        row = initialPos[0]
+        initialCrateRows[row] = initialCrateRows.get(row, 0) + 1
+
+    #Count current crates per row
+    for currentPos in state.cratePos:
+        row = currentPos[0]
+        currentCrateRows[row] = currentCrateRows.get(row, 0) + 1
+
+    allRows = sorted(list(set(initialCrateRows.keys()) | set(currentCrateRows.keys())))
+
+    for i in range(len(allRows)):
+        row = allRows[i]
+        initialCount = initialCrateRows.get(row, 0)
+        currentCount = currentCrateRows.get(row, 0)
+
+        if currentCount < initialCount:
+            #Some crates left this row. Check if they moved to a lower row.
+            movedAwayCount = initialCount - currentCount
+            for lowerRowIndex in range(i + 1, len(allRows)):
+                lowerRow = allRows[lowerRowIndex]
+                lowerCurrentCount = currentCrateRows.get(lowerRow, 0)
+                initialLowerCount = initialCrateRows.get(lowerRow, 0)
+                if lowerCurrentCount > initialLowerCount:
+                    reward += movedAwayCount  #Give a reward for a lowered crate
+    return reward
 
 
 class Node:
@@ -27,6 +94,7 @@ class Node:
         self.direction = direction
         self.helmetPos = []
         self.playerPos = []
+        self.cratePos = []
         for y in range(len(state)):
             for x in range(len(state[y])):
                 if 0 in state[y][x]:
@@ -36,6 +104,10 @@ class Node:
             for x in range(len(state[y])):
                 if 2 in state[y][x] or 7 in state[y][x]:
                     self.helmetPos.append((y, x))
+        for y in range(len(state)):
+            for x in range(len(state[y])):
+                if 3 in state[y][x]:
+                    self.cratePos.append((y, x))
 
         self.distanceMatrix = self.create_distance_matrix()
 
@@ -44,15 +116,23 @@ class Node:
         self.f = g + h  #Total cost (f = g + h)
 
     def __lt__(self, other):
-        return self.f < other.f  # Compare based on the f value
+        return self.f < other.f  #Compare based on the f value
     
     def manhattan_distance(self, pos1, pos2):
         return abs(pos2[0] - pos1[0]) + abs(pos2[1] - pos1[1])
     
     def create_distance_matrix(self):
-        positions = self.playerPos + self.helmetPos
+        if len(self.helmetPos) >= 10: #The tsp solver struggles on high numbers of helmets, only taking into account the 5 closest.
+            closestHelmets = sorted(self.helmetPos, key=lambda helmet: abs(self.playerPos[0][0] - helmet[0]) + abs(self.playerPos[0][1] - helmet[1]))
+            closestHelmets = closestHelmets[:5]
+
+            positions = self.playerPos + closestHelmets
+        else:
+            positions = self.playerPos + self.helmetPos
+
         n = len(positions)
         distMatrix = [[0] * n for _ in range(n)]
+ 
 
         for i in range(n):
             for j in range(1, n): #Start at 1 to make distance from helmet to player 0
@@ -64,23 +144,13 @@ class Node:
 
 def heuristic(state):
     try:
-        """source = state.playerPos[0]
-        if not find_next_states(state.grid):
-            return float('inf')
+        #return min_distance_heuristic(state) #Heuristic calculating minimum distance
     
-        minDistance = float('inf')
-        for dest in state.helmetPos:
-            distance = (abs(source[0] - dest[0]) + abs(source[1] - dest[1]))
-            if distance < minDistance:
-                minDistance = distance
-
-        return minDistance"""
-
-        #Use python_tsp library to solve Travelling Salesperson Problem
-        #print(state.distanceMatrix)
-        distMatrix = np.array(state.distanceMatrix)
-        tspPath, distance = solve_tsp_dynamic_programming(distMatrix)
-        return distance
+        #return total_distance_heuristic(state) #Heuristic calculating total distance
+    
+        return TSP_heuristic(state) # Heuristic calculating TSP cycle
+    
+        #return TSP_heuristic(state) - 2 * if_crates_lower(state)
 
     except:
         return float('inf')
@@ -126,10 +196,15 @@ def IDAStar(currentNode, limit, closedSet):
     return minf
 
 
-def A_Star_Search(initialState):
+def A_Star_Search(initialState, timeout = 300):
+    startTime=time.time()
     limit = heuristic(Node(initialState))
     #print(limit)
     while True:
+        elapsedTime = time.time() - startTime
+        if elapsedTime > timeout:
+            print(f"Search exceeded the time limit of {timeout} seconds.")
+            return None, None
         closedSet = set()
         result = IDAStar(Node(initialState), limit, closedSet)
         if isinstance(result, tuple):
@@ -141,22 +216,33 @@ def A_Star_Search(initialState):
 
 def main():
     times = [9999] * 35
-    for levelNum in range(28, 36):
-        try:
-            fload = open(f"Levels/Level{levelNum}.json", "r")
-            level = json.load(fload)
-        except:
-            print(f"File Level{levelNum} not found. Continuing.")
-            continue
+    for levelNum in range(1, 51):
+        if levelNum != -1:
+            try:
+                fload = open(f"Levels/Level{levelNum}.json", "r")
+                level = json.load(fload)
+            except:
+                print(f"File Level{levelNum} not found. Continuing.")
+                continue
 
-        print(f"Level {levelNum}")
+            print(f"Level {levelNum}")
 
-        startTime = time.time()  #Start the timer
-        path, directions = A_Star_Search(level)
-        endTime = time.time()  #End the timer
-        elapsedTime = endTime - startTime  #Calculate elapsed time
-        print(f"Execution time: {elapsedTime:.4f} seconds")  #Print the execution time
-        print(f"Directions: {directions}")
-        times[levelNum-1] = elapsedTime
+            startTime = time.time()  #Start the timer
+            global levelNode
+            levelNode = Node(level)
+            path, directions = A_Star_Search(level)
+            endTime = time.time()  #End the timer
+            elapsedTime = endTime - startTime  #Calculate elapsed time
+            print(f"Execution time: {elapsedTime:.4f} seconds")  #Print the execution time
+
+            if directions or path:
+                print(f"Directions: {directions}")
+                times[levelNum-1] = elapsedTime
+            else:
+                print("Failed to find a solution within the time limit.")
     print(times)
-main()
+
+
+
+if __name__ == '__main__':
+    main()
