@@ -2,18 +2,12 @@ import json
 import copy
 
 
-try:
-    fload = open("saved_level.json", "r")
-    level = json.load(fload)
-except:
-    level = [[1]]
-
-
 def find_next_states(initialState):
     #use deepcopy when resetting states to avoid variable in possible states list changing as well
     state = copy.deepcopy(initialState)
 
     possibleStates = []
+    possibleDirections = []
 
     for row, y in enumerate(state):
         for col, list in enumerate(y):
@@ -33,8 +27,9 @@ def find_next_states(initialState):
                 canPlace = True
         state = fallingTilesTest(state)
         possibleStates.append(state)
+        possibleDirections.append("down")
         state = copy.deepcopy(initialState)
-        print("case 1")
+        #print("case 1")
     
     #case 2: empty cell or ladder or roof left or right. This move can be a next state, not necesarily the best move though
     #edge cases should not matter here because the level will always be surrounded by a layer of bricks, therefore, Johnny will not be at [0, x] or [y, 0]
@@ -64,8 +59,9 @@ def find_next_states(initialState):
             state[johnnyPos[0]][johnnyPos[1] + 1].append(0)
         state = fallingTilesTest(state)
         possibleStates.append(state)
+        possibleDirections.append("right")
         state = copy.deepcopy(initialState)
-        print("case 2")
+        #print("case 2")
     #left
     if state[johnnyPos[0]][johnnyPos[1] - 1] in ([-1], [-1, 5], [-1, 6]):
         state[johnnyPos[0]][johnnyPos[1]].remove(0)
@@ -90,26 +86,30 @@ def find_next_states(initialState):
             state[johnnyPos[0]][johnnyPos[1] - 1].append(0)
         state = fallingTilesTest(state)
         possibleStates.append(state)
+        possibleDirections.append("left")
         state = copy.deepcopy(initialState)
-        print("case 2")
+        #print("case 2")
 
     #case 3: Johnny on ladder or roof with ladder or empty space or roof above and below
-    #above
     if 5 in state[johnnyPos[0]][johnnyPos[1]] or 6 in state[johnnyPos[0]][johnnyPos[1]]:
+        #up
         if state[johnnyPos[0] - 1][johnnyPos[1]] in ([-1], [-1, 5], [-1, 6]):
             state[johnnyPos[0]][johnnyPos[1]].remove(0)
             state[johnnyPos[0] - 1][johnnyPos[1]].append(0)
             state = fallingTilesTest(state)
             possibleStates.append(state)
+            possibleDirections.append("up")
             state = copy.deepcopy(initialState)
-            print("case 3")
+            #print("case 3")
+        #down
         if state[johnnyPos[0] + 1][johnnyPos[1]] in ([-1, 5], [-1, 6]):
             state[johnnyPos[0]][johnnyPos[1]].remove(0)
             state[johnnyPos[0] + 1][johnnyPos[1]].append(0)
             state = fallingTilesTest(state)
             possibleStates.append(state)
+            possibleDirections.append("down")
             state = copy.deepcopy(initialState)
-            print("case 3")
+            #print("case 3")
     
     #case 4: crate left or right. Nothing behing the crate. Johnny can push the crate
     #left
@@ -128,8 +128,9 @@ def find_next_states(initialState):
                 canPlace = True
         state = fallingTilesTest(state)
         possibleStates.append(state)
+        possibleDirections.append("left")
         state = copy.deepcopy(initialState)
-        print("case 4")
+        #print("case 4")
     #right
     if 3 in state[johnnyPos[0]][johnnyPos[1] + 1] and state[johnnyPos[0]][johnnyPos[1] + 2] == [-1]:
         state[johnnyPos[0]][johnnyPos[1]].remove(0)
@@ -146,68 +147,82 @@ def find_next_states(initialState):
                 canPlace = True
         state = fallingTilesTest(state)
         possibleStates.append(state)
+        possibleDirections.append("right")
         state = copy.deepcopy(initialState)
-        print("case 4")
+        #print("case 4")
 
-    #case 5: water or helmet left or right. Johnny removes the water or helmet.
+    #case 5: water or helmet or still helmet left or right. Johnny removes the water or helmet.
     #left
-    if 4 in state[johnnyPos[0]][johnnyPos[1] - 1]or 2 in state[johnnyPos[0]][johnnyPos[1] - 1]:
+    if 4 in state[johnnyPos[0]][johnnyPos[1] - 1] or 2 in state[johnnyPos[0]][johnnyPos[1] - 1] or 7 in state[johnnyPos[0]][johnnyPos[1] - 1]:
         state[johnnyPos[0]][johnnyPos[1]].remove(0)
         state[johnnyPos[0]][johnnyPos[1] - 1].append(0)
         if 4 in state[johnnyPos[0]][johnnyPos[1] - 1]:
             state[johnnyPos[0]][johnnyPos[1] - 1].remove(4)
         elif 2 in state[johnnyPos[0]][johnnyPos[1] - 1]:
             state[johnnyPos[0]][johnnyPos[1] - 1].remove(2)
+        elif 7 in state[johnnyPos[0]][johnnyPos[1] - 1]:
+            state[johnnyPos[0]][johnnyPos[1] - 1].remove(7)
         state = fallingTilesTest(state)
         possibleStates.append(state)
+        possibleDirections.append("left")
         state = copy.deepcopy(initialState)
-        print("case 5")
+        #print("case 5")
     #right
-    if 4 in state[johnnyPos[0]][johnnyPos[1] + 1] or 2 in state[johnnyPos[0]][johnnyPos[1] + 1]:
+    if 4 in state[johnnyPos[0]][johnnyPos[1] + 1] or 2 in state[johnnyPos[0]][johnnyPos[1] + 1] or 7 in state[johnnyPos[0]][johnnyPos[1] + 1]:
         state[johnnyPos[0]][johnnyPos[1]].remove(0)
         state[johnnyPos[0]][johnnyPos[1] + 1].append(0)
         if 4 in state[johnnyPos[0]][johnnyPos[1] + 1]:
             state[johnnyPos[0]][johnnyPos[1] + 1].remove(4)
         elif 2 in state[johnnyPos[0]][johnnyPos[1] + 1]:
             state[johnnyPos[0]][johnnyPos[1] + 1].remove(2)
+        elif 7 in state[johnnyPos[0]][johnnyPos[1] + 1]:
+            state[johnnyPos[0]][johnnyPos[1] + 1].remove(7)
         state = fallingTilesTest(state)
         possibleStates.append(state)
+        possibleDirections.append("right")
         state = copy.deepcopy(initialState)
-        print("case 5")
+        #print("case 5")
 
-    #case 6: Johnny in empty tile. Ladder under Johnny. Can climb down ladder
+    #case 6: Johnny in empty tile. Ladder or roof under Johnny. Can climb down ladder
     if state[johnnyPos[0]][johnnyPos[1]] in [[-1, 0], [0, -1]]:
-        if 5 in state[johnnyPos[0] + 1][johnnyPos[1]]:
+        if 5 in state[johnnyPos[0] + 1][johnnyPos[1]] or 6 in state[johnnyPos[0] + 1][johnnyPos[1]]:
             state[johnnyPos[0]][johnnyPos[1]].remove(0)
             state[johnnyPos[0] + 1][johnnyPos[1]].append(0)
             state = fallingTilesTest(state)
             possibleStates.append(state)
+            possibleDirections.append("down")
             state = copy.deepcopy(initialState)
-            print("case 6")
+            #print("case 6")
                 
-    return possibleStates
+    return possibleStates, possibleDirections
 
 
 #If anything is still floating after this, loop throught the level until nothing is floating.
 #This could cause the computational power to become large, maybe try to do this in the cases later.
 #Start from the bottom and work up, as an item could fall which could make another item fall.
 def fallingTilesTest(state):
-    for y in range(len(level) - 1, -1, -1):  # Start from the last row
-        for x in range(len(level[y])):
-            if state[y][x] in [[-1, 2], [-1, 3]]:
-                tile = state[y][x][1]  # Extract the tile type (2 or 3)
+    for y in range(len(state) - 1, -1, -1):  #Start from the last row
+        for x in range(len(state[y])):
+            if state[y][x] in [[-1, 2], [-1, 3], [-1, 0]]:
+                tile = state[y][x][1]  #Extract the tile type (0, 2 or 3)
                 
-                i = 1  # Start checking one row below
-                while y + i < len(level) and state[y + i][x] == [-1]:  # Check bounds and empty space
+                i = 1  #Start checking one row below
+                while y + i < len(state) and state[y + i][x] == [-1]:  #Check bounds and empty space
                     i += 1
                 
-                # Place the tile in the row above the first non-empty space
+                #Place the tile in the row above the first non-empty space
                 state[y + i - 1][x].append(tile)
                 state[y][x].remove(tile)
     return state
 
-def main():
-    nextStates = find_next_states(level)
+"""def main():
+    try:
+        fload = open("saved_level.json", "r")
+        level = json.load(fload)
+    except:
+        level = [[1]]
+
+    nextStates, path = find_next_states(level)
 
     for num, i in enumerate(nextStates):
         print(num)
@@ -218,4 +233,4 @@ def main():
     with open("saved_level.json", "w") as f:
         json.dump(nextStates[0], f) #change 0 with number of state you want to visit
 
-main()
+main()"""
